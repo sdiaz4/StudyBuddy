@@ -61,9 +61,6 @@ int main() {
 		cout << "you chose to join" << endl;
 	}
 
-	if (int i = 0; i < 10; i++) {
-		cout << "i = " << i << endl;
-	}
 }
 
 
