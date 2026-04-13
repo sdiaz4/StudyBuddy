@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <cstring>
 #include <WinSock2.h>
 #include <ws2tcpip.h>
@@ -132,12 +133,15 @@ void startHost(string username) {
 }
 SOCKET findServers(string name) {
 
+
+	//opens the socket network
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
 		cout << "WSAStartup failed\n";
 		return SOCKET_ERROR;
 	}
 	
+	// creates a socket to send and receive messages
 	SOCKET StudySocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
 	if (StudySocket == INVALID_SOCKET) {
@@ -146,11 +150,13 @@ SOCKET findServers(string name) {
 		return SOCKET_ERROR;
 	}
 
+	// buffer to hold the list of servers found
 	ServerStruct servers[MAX_SERVERS];
 
-	
+	// calls helper function to get the list of servers and the number of servers found
 	int serverNum = getServers(StudySocket, servers);
 
+	// outputs the list of servers found to the console
 	cout << "Available servers:" << endl;
 	if (serverNum == 0) {
 		cout << "No servers found." << endl;
@@ -164,8 +170,74 @@ SOCKET findServers(string name) {
 			 }
 		 }
 	}
-	
-	
+
+	// prompts user to select a server to join and checks for valid input
+	int choiceNum = stoi(getLine("Which group would you like to join? \n"));
+	if (choiceNum < 1 || choiceNum > serverNum) {
+		cout << "Invalid choice." << endl;
+		return SOCKET_ERROR;
+	}
+
+	// gets the address of the selected server to send messages to
+	sockaddr_in serverAddr = servers[choiceNum - 1].addr;
+
+	// main loop to send messages to the server and receive responses
+	while (true) {
+
+		cout << "Menu:" <<
+			"1. Where?\n" <<
+			"2. What?\n" <<
+			"3. Members?\n" <<
+			"4. Join group\n" <<
+			"5. Exit\n";
+
+		int action = stoi(getLine("Select an option: \n"));
+
+		string message;
+
+		if (action == 1)
+			message = Study_WHERE;
+		else if (action == 2)
+			message = Study_WHAT;
+		else if (action == 3)
+			message = Study_MEMBERS;
+		else if (action == 4)
+			message = Study_JOIN + name;
+		else
+			cout << "exiting...";
+			break;
+
+		// sends the selected message to the server
+		sendto(StudySocket, message.c_str(), message.size() + 1, 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+		cout << "Sent message: " << message << endl;
+
+
+		// buffer and variables to receive response from server
+		char buffer[DEFAULT_BUFLEN];
+		sockaddr_in fromAddr;
+		int fromAddrSize = sizeof(fromAddr);
+
+		// receives response from server and checks for errors
+		int len = recvfrom(StudySocket, buffer, DEFAULT_BUFLEN, 0, (sockaddr*)&fromAddr, &fromAddrSize);
+		if (len == SOCKET_ERROR) {
+			cout << "recvfrom failed with error: " << WSAGetLastError() << endl;
+			continue;
+		}
+		
+		if (len > 0) {
+			buffer[len] = '\0';
+			cout << "Received response: " << buffer << endl;
+		}
+		
+		if (action == 4) {
+			cout << "Joined group. Exiting" << endl;
+		}
+		
+	}
+	// closes the socket and cleans up Winsock
+	closesocket(StudySocket);
+	WSACleanup();
+	return StudySocket;
 }
 
 
@@ -179,15 +251,13 @@ int main() {
 	}
 
 	if (action == 1) {
-		cout << "you chose to host" << endl;
 		startHost(name);
 	}
 	else {
-		cout << "you chose to join" << endl;
 		findServers(name);
 	}
 
-	WSACleanup();
+	
 }
 
 
