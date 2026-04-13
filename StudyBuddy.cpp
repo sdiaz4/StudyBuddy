@@ -66,7 +66,16 @@ void startHost(string username) {
 
 	//asks for user input for location and courses
 	string location = getLine("Enter your location: \n");
-	string courses = getLine("Enter your courses: \n");
+
+	vector<string> courses;
+	while (true) {
+		string course = getLine("Enter a course you are studying (or type 'done' to finish): \n");
+		if (_stricmp(course.c_str(), "done") == 0) {
+			break;
+		}
+		courses.push_back(course);
+	}
+		
 
 	// creates and adds user to the list of members in the study group
 	vector<string> members;
@@ -104,8 +113,14 @@ void startHost(string username) {
 			sendto(serverSocket, response.c_str(), response.size() + 1, 0, (sockaddr*)&clientAddr, clientAddrSize);
 			cout << "Sending response: " << response << endl;
 		}
-		else if (_stricmp(buffer, Study_WHAT) == 0) {
-			string response = Study_COURSES + courses;
+		else if (_stricmp(buffer, Study_COURSES) == 0) {
+			string response = Study_COURSES;
+			for (const string& course : courses) {
+				response += course + "\n";
+			}
+			if (!courses.empty()) {
+				response.pop_back();
+			}
 			sendto(serverSocket, response.c_str(), response.size() + 1, 0, (sockaddr*)&clientAddr, clientAddrSize);
 			cout << "Sending response: " << response << endl;
 		}
@@ -237,12 +252,13 @@ SOCKET findServers(string name) {
 		
 		if (action == 4) {
 			cout << "Joined group. Exiting" << endl;
+			closesocket(StudySocket);
+			break;
 		}
 		
 	}
 	// closes the socket and cleans up Winsock
 	closesocket(StudySocket);
-	WSACleanup();
 	return StudySocket;
 }
 
@@ -262,6 +278,7 @@ int main() {
 	else {
 		findServers(name);
 	}
+	WSACleanup();
 
 	
 }
