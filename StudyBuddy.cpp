@@ -184,7 +184,7 @@ SOCKET findServers(string name) {
 	// main loop to send messages to the server and receive responses
 	while (true) {
 
-		cout << "Menu:" <<
+		cout << "Menu:\n" <<
 			"1. Where?\n" <<
 			"2. What?\n" <<
 			"3. Members?\n" <<
@@ -195,17 +195,23 @@ SOCKET findServers(string name) {
 
 		string message;
 
-		if (action == 1)
+		if (action == 1) {
 			message = Study_WHERE;
-		else if (action == 2)
+		}
+		else if (action == 2) {
 			message = Study_WHAT;
-		else if (action == 3)
+		}
+		else if (action == 3) {
 			message = Study_MEMBERS;
-		else if (action == 4)
+		}
+		else if (action == 4) {
 			message = Study_JOIN + name;
-		else
+		}
+		else {
 			cout << "exiting...";
 			break;
+		}
+			
 
 		// sends the selected message to the server
 		sendto(StudySocket, message.c_str(), message.size() + 1, 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
