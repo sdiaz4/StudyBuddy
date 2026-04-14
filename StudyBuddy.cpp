@@ -113,7 +113,7 @@ void startHost(string username) {
 			sendto(serverSocket, response.c_str(), response.size() + 1, 0, (sockaddr*)&clientAddr, clientAddrSize);
 			cout << "Sending response: " << response << endl;
 		}
-		else if (_stricmp(buffer, Study_COURSES) == 0) {
+		else if (_stricmp(buffer, Study_WHAT) == 0) {
 			string response = Study_COURSES;
 			for (const string& course : courses) {
 				response += course + "\n";
@@ -227,11 +227,13 @@ SOCKET findServers(string name) {
 			break;
 		}
 			
+		
 
 		// sends the selected message to the server
 		sendto(StudySocket, message.c_str(), message.size() + 1, 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 		cout << "Sent message: " << message << endl;
 
+		wait(StudySocket, 2, 1);
 
 		// buffer and variables to receive response from server
 		char buffer[DEFAULT_BUFLEN];
