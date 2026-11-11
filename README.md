@@ -42,7 +42,7 @@ All messages are plain-text UDP datagrams (constants in `StudyBuddy.h`):
 | File | Description |
 | --- | --- |
 | `StudyBuddy.cpp` | The program: `main` (host or join), `startHost` (the server loop), `findServers` (client discovery and menu) and `establishServerSocket` (binds the UDP socket). |
-| `Utilities.cpp` | Networking helpers: `getServers` (broadcasts `Who?` and collects replies), `wait` (waits for incoming data with `select` and a timeout), and `GetBroadcastAddress` / `GetBroadcastAddressAlternate` (work out the subnet's broadcast address from the IP address and subnet mask). |
+| `Utilities.cpp` | Networking helper code **provided by the course** (marked in the file): `getServers` (broadcasts `Who?` and collects replies), `wait` (waits for incoming data with `select` and a timeout), and `GetBroadcastAddress` / `GetBroadcastAddressAlternate` (work out the subnet's broadcast address from the IP address and subnet mask). |
 | `StudyBuddy.h` | Protocol strings, buffer sizes, the port number and the `ServerStruct` type. |
 | `StudyBuddy.sln`, `StudyBuddy.vcxproj`, `StudyBuddy.vcxproj.filters` | Visual Studio solution and project files. |
 
