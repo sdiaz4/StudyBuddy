@@ -6,6 +6,8 @@
 
 #pragma comment (lib, "iphlpapi.lib")
 
+/* ### COURSE PROVIDED CODE ### */
+
 int getServers(SOCKET s, ServerStruct server[])
 {
 	// Parameter List:
@@ -168,3 +170,5 @@ sockaddr_in GetBroadcastAddressAlternate(char* IPAddress, char* subnetMask)
 
 	return addr;
 }
+
+/*### COURSE PROVIDED CODE  ###*/
