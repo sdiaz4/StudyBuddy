@@ -56,6 +56,6 @@ Requires **Windows** and **Visual Studio** (it uses Winsock2 and the IP Helper A
 
 ## Notes and limitations
 
-- `getServers` falls back to a hard-coded IP address and subnet mask (`` / `255.255.240.0`) when it can't work out the broadcast address automatically. Change these in `Utilities.cpp` to match your network.
+- The broadcast address is worked out from your network adapter automatically. If that fails, the program asks for your IP address and subnet mask. You can also set them in `getServers` in `Utilities.cpp`.
 - The host runs until the program is closed, and members are kept only in memory.
 - Broadcast discovery only finds hosts on the same local subnet.
